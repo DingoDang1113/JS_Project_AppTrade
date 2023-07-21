@@ -33,7 +33,7 @@ AppTrade offers a seamless and intuitive user experience, featuring:
 ## Sneak Peek
 Experience our user-centric platform with this page demo.
 
-![page demo](https://wireframe.cc/N4mCHe)
+![page demo](file:///Users/shalipeng/Desktop/Screen%20Shot%202023-07-21%20at%2012.21.35%20AM.png)
 
 ## Development Timeline
 Our diligent development process was as follows:
