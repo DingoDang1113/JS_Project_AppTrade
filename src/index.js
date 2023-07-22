@@ -1,5 +1,5 @@
 async function apiInput(symbol) {
-  const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=X4P4NAYA7W5GTCBT`;
+  const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=`;
 
   try {
     const response = await fetch(url);
