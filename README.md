@@ -38,7 +38,7 @@ Experience our user-centric platform with this page demo.
 ## Development Timeline
 Our diligent development process was as follows:
 
-- **7/21 (Friday):** API integration for data fetching.
+- **7/21 (Friday):** Setup project with all basic requirements. API integration for data fetching.
 - **7/24 (Monday):** Backend development, focusing on core logic implementation.
 - **7/25 (Tuesday):** Front-end enhancement, emphasizing visual elements and graph integration.
 - **7/26 (Wednesday):** Rigorous testing to ensure seamless user experience.
