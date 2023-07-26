@@ -1,0 +1,141 @@
+@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+:root {
+	--c-gray-900: #000000;
+	--c-gray-800: #1f1f1f;
+	--c-gray-700: #2e2e2e;
+	--c-gray-600: #313131;
+	--c-gray-500: #969593;
+	--c-gray-400: #a6a6a6;
+	--c-gray-300: #bdbbb7;
+	--c-gray-200: #f1f1f1;
+	--c-gray-100: #ffffff;
+
+	--c-green-500: #45ffbc;
+	--c-olive-500: #e3ffa8;
+
+	--c-white: var(--c-gray-100);
+
+	--c-text-primary: var(--c-gray-100);
+	--c-text-secondary: var(--c-gray-200);
+	--c-text-tertiary: var(--c-gray-500);
+}
+
+body {
+	line-height: 1.5;
+	min-height: 100vh;
+	font-family: "Be Vietnam Pro", sans-serif;
+	background-color: var(--c-gray-900);
+	color: var(--c-text-primary);
+	display: block;
+	padding-top: 0vw;
+	padding-bottom: 0vw;
+    margin-left: 5%;
+    margin-right: 5%;
+	justify-content: space-evenly;
+    align-items: left;
+}
+
+h1{
+    display: flex;
+    font-size: 22px;
+    color: #f2d742;
+    font-weight: 700;
+    height: 60px;
+}
+
+header {
+    display: flex;
+    font-size: 20px;
+    color:#afc9cf;
+    font-weight: 400; 
+    align-items: center;
+    justify-content: space-between; 
+    /* background-color: yellowgreen; */
+}
+
+.tabs a {
+    display: inline-flex;
+    color: inherit;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    text-decoration: none;
+    border-top: 2px solid transparent;
+    transition: 0.25s;
+    margin-left: 10px;
+}
+
+
+
+#content   {
+    display: flex;
+    /* flex-direction: row; */
+    font-family: "Be Vietnam Pro", sans-serif;
+    /* background-color: #45ffbc; */
+    align-items: left;
+    justify-content: left;
+    color: black;
+    padding: 1%;
+    margin-left: 1px;
+    border-radius: 25px;
+    overflow: scroll;
+    
+}
+
+#content div {
+    background-color:#45ffbc;
+    width: 155px;
+    border-radius: 8px;
+    margin-left: 8px;
+
+}
+
+
+#estimatorForm {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    width: 155px;
+    border: 1px solid white;
+    overflow: hidden;
+    border-radius: 8px;
+    background-color:#e3ffa8;
+}
+
+input[type="submit"] {
+    display: flex;
+    background: #e3ffa8;
+    border: none;
+    font-weight: 800;
+    font-size: large;
+    justify-content: right;
+}
+
+
+
+
+a.linkedin {
+    display: inline-block;
+    padding: 10px;
+    background: #0077b5;
+    color: white;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: background 0.3s;
+    background-color: white;
+}
+
+a.linkedin:hover {
+    background: #005582;
+}
+
+.fa-linkedin {
+    font-size: 20px;
+}
+
+
+
+/* *{
+    background-color: red;
+} */
+

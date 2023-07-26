@@ -4,10 +4,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="./src/index.js" type="application/javascript" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="./dist/main.css">
+
     <title>AppTrade</title>
+
 </head>
 <body>
-    <div id="content"></div>
+    <div class="App">
+        <header class="app-header">
+            <div class="app-header-logo">
+                <div class="logo">
+                    <span class="logo-icon">
+                        <img src="" >
+                    </span>
+                    <h1 calss="logo-title">AppTrade</h1>
+                </div>
+            </div>
+            <div class="app-header-navigation">
+                <div class="tabs">
+                    <a href="#">Account</a>
+                    <a href="#">Markets</a>
+                    <a href="#">Business</a>
+                    <a href="#">Investing</a>
+                    <a href="#">Tech </a>
+                    <a href="#">Crypto</a>
+                </div>
+
+            </div>
+
+            <div class="links">
+                <a href="https://www.linkedin.com/in/shalipeng/" class="linkedIn" target="_blank"><i class="fa fa-linkedin"></i></a> "use img instead"
+            </div>
+
+        </header>
+    </div>
+    <!-- <p>
+    <input type="text" id="searchBox" placeholder="Enter ticker or company name">
+    <button onclick="searchStock()">+</button>
+    </p> -->
+
+    <div id="content">
+
+    </div>
+
+    <div>
+        <form id="estimatorForm" onsubmit="event.preventDefault(); onSubmitForm()">
+            <input type="submit" value="+">
+            <label for="ticker">
+                <input type="text" id="ticker" name="ticker" placeholder="Search by Ticker">
+            </label>
+            <label for="purchasePrice"> 
+                <input type="text" id="purchasePrice" name="purchasePrice" placeholder="Purchase Price" >
+            </label>
+            <label for="quantity"> 
+                <input type="text" id="quantity" name="quantity" placeholder="# of Shares">
+            </label>
+            <label id="gainLoss">Gain/Loss: </label>
+        </form>
+    </div>
+
+
+
     
     
 </body>
