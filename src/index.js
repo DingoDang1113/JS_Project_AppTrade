@@ -257,8 +257,7 @@ async function buildChart() {
   }
 
   const ctx = document.getElementById('myChart').getContext('2d');
-  ctx.canvas.width = 80;
-  ctx.canvas.height = 40;
+
 
   myChart = new Chart(ctx, {
     type: 'bar', 
@@ -267,17 +266,18 @@ async function buildChart() {
       datasets: [{
         label: 'Gain/Loss in USD',
         data: gainLosses,
-        barPercentage: 1,
-        barThickness: 10,
+        barPercentage: 2,
+        // barThickness: 6,
         maxBarThickness:20,
+        minBarThickness:10,
         backgroundColor: 'rgba(180,255,228,1)',
         borderColor:'rgba(75,192,192,1)',
         borderWidth: 1
       }]
     },
     options: {
-      responsive: true,
-      // maintainAspectRatio: false,
+      responsive: false,
+      maintainAspectRatio: false,
       scales: {
         y: {
           beginAtZero: true,

@@ -1,45 +1,82 @@
+
+
 # AppTrade: Empower Your Investment Journey
 
-AppTrade is a comprehensive, real-time stock market analysis tool designed to enhance your investment decision-making. With a user-friendly interface and a rich set of functionalities, AppTrade simplifies market dynamics and offers detailed insights into your financial portfolio.
+AppTrade is a comprehensive, real-time stock market analysis tool designed to enhance your investment decision-making process. With a user-friendly interface and a rich set of functionalities, AppTrade simplifies market dynamics and offers detailed insights into your financial portfolio.
+
+## Table of Contents
+- [Demo](#demo)
+- [Features](#features)
+- [Getting Started](#getting-started)
+- [Usage](#usage)
+- [Built With](#built-with)
+- [User Experience](#user-experience)
+- [Future Enhancements](#future-enhancements)
+- [Contributing](#contributing)
+
+## Demo
+
+Here is a working live demo: [link](). (Replace [link]() with the actual link after deployment.)
+
+![populated](https://github.com/DingoDang1113/JS_Project_AppTrade/assets/73029929/5b80fc65-0138-4750-b972-b48b5167ddfa)
 
 ## Features
-AppTrade is equipped with:
+AppTrade equips you with:
 
-- **Portfolio Analytics**: Estimate potential gains or losses of your securities to better strategize your investments.
-- **Market Watch**: Monitor real-time and historical price changes of both index stocks and individual securities.
-- **Stock Insights**: Access at-a-glance statistics and ratios for individual stocks.
-- **Performance Comparator**: Evaluate your stocks against leading index stocks over different time spans.
-- **Power of Compound**: Visualize the growth potential with our feature that estimates the value of investing $1/day into the S&P 500, beginning from a date of your choice.
+- **Stock Insights**: Retrieve current stock prices through the search function.
+- **Customize Portfolio**: Compose a portfolio of stocks at your own selection.
+- **Estimations**: Understand your gain/loss, ROI for individual stock & overall portfolio.
+- **Visual**: See your stock/portfolio performance at a glance through dynamic visuals.
 
-Absolutely, here's a more engaging and detailed version of that section:
+## Getting Started
 
----
+To use AppTrade, navigate to [link]() in your browser. (Replace [link]() with the actual link.)
+
+The search box requires three inputs:
+
+- ticker: enter your stock ticker
+- purchase price: price at purchasing, USD only
+- quantity : number of shares at your purchase
+
+![search](https://github.com/DingoDang1113/JS_Project_AppTrade/assets/73029929/a63533fb-0b2a-46fe-acf3-a3c1fe32b2b6)
+
+![steps](https://github.com/DingoDang1113/JS_Project_AppTrade/assets/73029929/d0eaca14-3b66-4a67-a538-4575e39b59f9)
+
+Click the "+" sign on the right top corner to add a tile listing the ticker, current price, gain/loss, ROI. You can add as many tiles as you want to represent your portfolio. Click the "-" on top of each tile to remove the specific stock from your profile.
+
+
+The first tile on the left provides a holistic view of your total worth, gain/loss, and ROI. The graph below provides a visual representation of your gain/loss for each stock.
+
+## Usage
+
+After entering your stock information, the AppTrade dashboard will be populated with data representing your stock's current status and investment returns. The graph visually represents the stock's gain or loss.
+
+## Built With 
+
+- [Financial Modeling Prep API](https://financialmodelingprep.com/api/v3) - A free finance API 
+- [Chart.js](https://www.chartjs.org/) - For creating dynamic and responsive charts
+- [Node.js](https://nodejs.org/en/) - For backend operations
 
 ## User Experience
 
-AppTrade offers a seamless and intuitive user experience, featuring:
+AppTrade offers a seamless and intuitive user experience:
 
-- **Guided Navigation**: We provide a comprehensive, step-by-step guide for users to easily navigate through the dashboard. The guide includes instructions on:
-   - How to quickly locate specific stocks using their ticker symbols.
-   - The process of adding and managing your chosen stocks on the graph for visual tracking.
-   - The method of selecting key index stocks (e.g., S&P500, NASDAQ, etc.) for comparative analysis.
-   - The use of a simple +/- system for adding or removing content from view to declutter your workspace.
-   - The way to customize the time span for evaluating stock performance according to your investment goals.
+- **Guided Navigation**: Comprehensive instructions on how to locate stocks, add/manage stocks on the graph, use the simple +/- system, and customize the time span for evaluating stock performance.
 
-- **Tailored Interactivity**: AppTrade's interactive features are designed to adapt to and cater to users' individual preferences, providing a tailored investing experience.
+- **Tailored Interactivity**: Interactive features that adapt to user's individual preferences, providing a personalized investing experience.
 
-- **Dynamic Visualization**: Experience the power of visually compelling data representation with our dynamic and intuitive graphs. These are powered by chart.js and d3.js, enabling the visuals to update and adapt based on user input, promoting understanding and insight.
+- **Dynamic Visualization**: Visually compelling data representation with dynamic and intuitive graphs, powered by Chart.js and D3.js.
 
-## Sneak Peek
-Experience our user-centric platform with this page demo.
+## Future Enhancements
 
-![page demo](https://github.com/DingoDang1113/js-project/assets/73029929/c252f00d-2307-422e-8d68-ea5c7058965b)
+- Add functionality to search by company names
+- Expand to include ETFs/Cryptocurrencies
+- Improve the overall user interface
 
-## Development Timeline
-Our diligent development process was as follows:
+## Contributing
 
-- **7/21 (Friday):** Setup project with all basic requirements. API integration for data fetching.
-- **7/24 (Monday):** Backend development, focusing on core logic implementation.
-- **7/25 (Tuesday):** Front-end enhancement, emphasizing visual elements and graph integration.
-- **7/26 (Wednesday):** Rigorous testing to ensure seamless user experience.
-- **7/27 (Thursday):** Deployment and unveiling of the platform.
+We welcome contributions to AppTrade! If you would like to contribute, please fork the repository and submit a pull request.
+
+We use Git for versioning. For a list of versions available, see the [JS_Project_AppTrade](https://github.com/DingoDang1113/JS_Project_AppTrade).
+
+---
