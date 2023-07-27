@@ -166,7 +166,7 @@ async function updateTotalGainLossAndROI() {
   const summaryGl = document.createElement('p');
   summaryGl.id = "summaryGL";
   // summaryGl.style.fontWeight = "800";
-  summaryGl.textContent = `Gain/Loss:     $${totalGainLoss.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  summaryGl.innerHTML = `Gain/Loss<sup>*</sup>:     $${totalGainLoss.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
   
   const summaryROI = document.createElement('p');
   summaryROI.id = "summaryROI";
@@ -176,11 +176,20 @@ async function updateTotalGainLossAndROI() {
     summaryGl.style.color = "red";
     summaryROI.style.color = 'red';
   } 
+
+  const footer = document.createElement('p');
+  footer.id = 'footer';
+  footer.style.fontSize = '10px';
+  footer.style.fontStyle = 'italic';
+  footer.innerHTML = "<sup>*</sup> not include tax and related fees"
+  
+  
   
   
   summaryTile.appendChild(summaryTotal);
   summaryTile.appendChild(summaryGl);
   summaryTile.appendChild(summaryROI);
+  summaryTile.appendChild(footer.cloneNode(true));
 
 }
 
@@ -248,8 +257,8 @@ async function buildChart() {
   }
 
   const ctx = document.getElementById('myChart').getContext('2d');
-  ctx.canvas.width = 100;
-  ctx.canvas.height = 200;
+  ctx.canvas.width = 80;
+  ctx.canvas.height = 40;
 
   myChart = new Chart(ctx, {
     type: 'bar', 
@@ -258,6 +267,9 @@ async function buildChart() {
       datasets: [{
         label: 'Gain/Loss in USD',
         data: gainLosses,
+        barPercentage: 1,
+        barThickness: 10,
+        maxBarThickness:20,
         backgroundColor: 'rgba(180,255,228,1)',
         borderColor:'rgba(75,192,192,1)',
         borderWidth: 1
@@ -269,11 +281,17 @@ async function buildChart() {
       scales: {
         y: {
           beginAtZero: true,
+        },
+        x: {
+          grid: {
+            offset: true
+          }
         }
       }
     },
-    backgroundColor:'black'
+    // backgroundColor:'black'
   });
 }
+
 
 printTile();
