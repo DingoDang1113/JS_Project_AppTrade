@@ -1,29 +1,33 @@
-
 let tikerArr = [];
 let purchasePrices = {};
 let quanties = {};
+let myChart;
+let colorIndex = 0;
+const colors = ['#45ffbc', '#e3ffa8', '#a6a6a6', '#f6cd61','#aec993'];
 
 async function apiFetch(symbol) {
-  const url = `https://financialmodelingprep.com/api/v3/quote/${symbol}?apikey=f43645c7dcc9b1fe95e501b844e1c963`;
+  const url = `https://financialmodelingprep.com/api/v3/quote/${symbol}?apikey=9d63fd6e1909cca85846e3cc209`;
+
+  const storedData = localStorage.getItem(`${symbol}`);
+  if (storedData) {
+    return JSON.parse(storedData);
+  }
+
+
   try {
     const response = await fetch(url);
     const result = await response.json();
-    // console.log(JSON.stringify(response));
     localStorage.setItem(`${symbol}`, JSON.stringify(result));
-    console.log(localStorage.setItem(`${symbol}`, JSON.stringify(result)))
-    // console.log(result)
     return result;    
-      } catch(error) {
-        console.error(error);
-        return null;
-      }
-    }
+  } catch(error) {
+    console.error(error);
+    return null;
+  }
+}
 
 async function apiInput(symbol, purchasePrice, quantity) {
   const data = await apiFetch(symbol); 
   if (data.length > 0) {
-    //displayData(data);
-    //console.log(data)
     purchasePrices[symbol] = purchasePrice;
     quanties[symbol] = quantity;
     localStorage.setItem('purchasePrices', JSON.stringify(purchasePrices));
@@ -32,108 +36,189 @@ async function apiInput(symbol, purchasePrice, quantity) {
     return parseFloat(data[0].price);
   } 
 }
-  
-
+const contentDiv = document.getElementById('content');
+const tileDiv = document.getElementById('stockTiles');
 
 function displayData(data) { 
-  const contentDiv = document.getElementById('content');
-  //const searchBox = document.getElementById('searchBox');
-  
-  // data.forEach((stock) => {
-    const stock = data[0];
-    const symbol = document.createElement('span'); 
-    const tile = document.createElement('div');
-    tile.style.border = '1px solid white';
-    tile.style.margin = '10px';
-    tile.style.padding ='1px';
-    // tile.style.width = '100px';
+  // console.log('display is passed with', data);
+  const stock = data[0];
+  const symbol = document.createElement('span'); 
+  const tile = document.createElement('div');
+  // tile.style.border = '1px solid';
+  tile.style.margin = '5px';
+  tile.style.padding ='1px';
+  tile.style.borderRadius = '8px';
+  tile.style.width = '150px';
+  tile.style.backgroundColor = colors[colorIndex % colors.length];
+  colorIndex++;
+  const info = document.createElement('span');
 
-    const info = document.createElement('span');
-
-    const percentChg = function (percent) {
-      if (percent > 0) {
-        return `⬆${percent.toFixed(2)}%`
-      } else {
-        return `⬇${percent.toFixed(2)}%`
-      }
+  // conditional format
+  const percentChg = function (percent) {
+    if (percent > 0) {
+      return `⬆${percent.toFixed(2)}%`
+    } else {
+      return `⬇${percent.toFixed(2)}%`
     }
-
-    if (stock['changesPercentage'] < 0) {
-      info.style.color = 'red';
-    } 
-    
-    info.textContent = `${stock['symbol']} $${stock['price'].toFixed(2)} ${percentChg(stock['changesPercentage'])}`;
-   
-    tile.appendChild(info);
-    contentDiv.appendChild(tile);
-    contentDiv.appendChild(price);
-    return stock['price'];
-  // });
-}
-
-
-function postLocalData(key) {
-  let retrieveData = localStorage.getItem(key);
-  if (retrieveData) {
-    let locData = JSON.parse(retrieveData);
-    displayData(locData);
   }
+
   
+  const purchasePrice = purchasePrices[stock['symbol']];
+  const quantity = quanties[stock['symbol']];
+  const gainLoss =  (stock['price'] - purchasePrice) * quantity;
+  const roi = (stock['price']/purchasePrice - 1) * 100;
+  
+  // Create separate elements for each piece of info
+  const symbolP = document.createElement('p');
+  symbolP.id = "symbolInfo";
+  symbolP.style.fontWeight = "600";
+  symbolP.textContent = `${stock['symbol']}`;
+  
+  const priceP = document.createElement('p');
+  priceP.id = "priceInfo";
+  priceP.style.fontStyle = "oblique";
+  priceP.textContent = `$${stock['price'].toFixed(2)}`;
+  
+  const percentChgP = document.createElement('p');
+  percentChgP.id = "changeInfo";
+  percentChgP.style.fontStyle = "oblique";
+  percentChgP.textContent = `${percentChg(stock['changesPercentage'])}`;
+  
+  if (stock['changesPercentage'] < 0) {
+    priceP.style.color = "red";
+    percentChgP.style.color = 'red';
+  } 
+  
+  const gainLossP = document.createElement('p');
+  gainLossP.id = "gainLossInfo";
+  gainLossP.textContent = `$${gainLoss.toFixed(2)}`;
+  
+  const roiP = document.createElement('p');
+  roiP.id = "roiInfo";
+  roiP.textContent = `${percentChg(roi)}`;
+  if (roi < 0) {
+    gainLossP.style.color = "red";
+    roiP.style.color = 'red';
+  } 
+  
+  //delete button
+  const deleteTile = document.createElement('button');
+  deleteTile.textContent = '-';
+  deleteTile.addEventListener('click', function() {
+  const index = tikerArr.indexOf(stock['symbol']);
+    if (index !== -1) {
+      tikerArr.splice(index, 1);
+      delete purchasePrices[stock['symbol']];
+      delete quanties[stock['symbol']];
+    }
+    tileDiv.removeChild(tile);
+    buildChart();
+    updateTotalGainLossAndROI();
+    
+    
+  });
+  // append 
+  tile.appendChild(deleteTile);
+  tile.appendChild(info);
+  tile.appendChild(symbolP);
+  tile.appendChild(priceP);
+  tile.appendChild(percentChgP);
+  tile.appendChild(gainLossP);
+  tile.appendChild(roiP);
+  tileDiv.appendChild(tile);
+
+  return stock['price'];
 }
+
+async function updateTotalGainLossAndROI() {
+  // Calculate total gain/loss and ROI
+  let totalGainLoss = 0;
+  let totalInvestment = 0;
+  let totalCurrentValue = 0;
+  for (const symbol of Object.keys(purchasePrices)) {
+    const data = await apiFetch(symbol);
+    if (data && data.length > 0) {
+      const currentPrice = data[0].price;
+      totalGainLoss += (currentPrice - purchasePrices[symbol]) * quanties[symbol];
+      totalInvestment += quanties[symbol] * purchasePrices[symbol];
+      totalCurrentValue += quanties[symbol] * currentPrice;
+    }
+  }
+  // console.log ('totalGainLoss', totalGainLoss) // gets back value
+
+  // Calculate ROI
+  const totalROI = ((totalCurrentValue / totalInvestment) - 1) * 100;
+  console.log('totalROI',totalROI)
+
+  // summary tile
+  const summaryTile = document.getElementById('summaryTile');
+  summaryTile.innerHTML = "";
+  // console.log(summaryTile);
+  // summaryTile.textContent = `Total Gain/Loss: $${totalGainLoss.toFixed(2)} Total ROI: ${totalROI.toFixed(2)}%`;
+
+
+  const summaryGl = document.createElement('p');
+  summaryGl.id = "summaryGL";
+  summaryGl.style.fontWeight = "800";
+  summaryGl.textContent = `Gain/Loss:     $${totalGainLoss.toFixed(2)}`;
+
+  const summaryROI = document.createElement('p');
+  summaryROI.id = "summaryROI";
+  summaryROI.style.marginTop = '5px';
+  summaryROI.textContent = `${totalROI.toFixed(2)}%`;
+
+  summaryTile.appendChild(summaryGl);
+  summaryTile.appendChild(summaryROI);
+
+
+}
+
 
 async function onSubmitForm() {
-  //event.preventDefault();
   const ticker = document.getElementById('ticker').value;
   const purchasePrice = parseFloat(document.getElementById('purchasePrice').value);
   const quantity = parseFloat(document.getElementById('quantity').value);
+  
+  if (tikerArr.includes(ticker)) {
+    console.log('This ticker is already added'); 
+    return;
+  }
+  
   document.getElementById('estimatorForm').style.backgroundColor = '#e3ffa8';
-
-
   const currentPrice = await apiInput(ticker, purchasePrice, quantity);
-  console.log(currentPrice);
-  if (currentPrice) {
+  if (currentPrice && ticker.trim() !=='') {
     const gainLoss =  (currentPrice - purchasePrice) * quantity;
-    const roi = (currentPrice/purchasePrice -1).toFixed(2)*100
+    const roi = (currentPrice/purchasePrice -1).toFixed(2)*100;
 
-    const infoDiv = document.createElement('div');
+    
 
-    infoDiv.innerHTML = `
-      <p>${ticker}</p>
-      <p>$${currentPrice.toFixed(2)}</p>
-      <p>$${purchasePrice.toFixed(2)}</p>  
-      <p>$${gainLoss.toFixed(2)}</p>
-      <p>${roi.toFixed(2)}%</p>
-      
-    `;
-
-    tikerArr.push(ticker)    // array = ['JPM, price, quantity','APPL','PE']
-    // console.log(tikerArr);
-    // localStorage.setItem(`${symbol}`, JSON.stringify(result));
-    //Write a method for each item -> builds an array the trader the trader is watching -> iterate thru the array from local storage -> pass the info to card
-
-    document.getElementById('content').appendChild(infoDiv);
+    tikerArr.push(ticker)
+    await printTile();  // Display the tile
+    await updateTotalGainLossAndROI();
 
   } else {
-    console.log('failed to fetech current price');
+    console.log('failed to fetch current price');
   }  
 }
 
 function printTile () {    // render all tiles
-  //loop thru the tikerArr 
-  // let locTickers = JSON.parse(localStorage.getItem('tickers'));
-    document.getElementById('content').innerHTML = "";
-    // pass tiker into postLocData()
-   
-    tikerArr.forEach ((ticker) => {
+    document.getElementById('stockTiles').innerHTML = "";
+    while (tileDiv.firstChild ) {
+      tileDiv.removeChild(tileDiv.firstChild)
+    }
+    tikerArr?.forEach ((ticker) => {
       let tickerData = JSON.parse(localStorage.getItem(ticker));
       displayData(tickerData);
-    })
-
+    });
+    buildChart();
 }
 
-
 async function buildChart() {
-  const tickers = tikerArr;
+  if(myChart) {
+    myChart.destroy();
+  }
+
+  let tickers = tikerArr;
   let gainLosses = [];
   let labels = [];
   const purchasePrices = JSON.parse(localStorage.getItem('purchasePrices'));
@@ -142,49 +227,42 @@ async function buildChart() {
   for (let i = 0; i < tickers.length; i++) {
     let tickerData = JSON.parse(localStorage.getItem(tickers[i]));
     if (tickerData && tickerData.length > 0) {
-      let currentPrice = tickerData.price;
-      let purchasePrice = tickerData.price;
+      let currentPrice = tickerData[0].price;
+      let purchasePrice = purchasePrices[tickers[i]];
       let quantity = quanties[tickers[i]];
       let gainLoss = (currentPrice - purchasePrice) * quantity;
-      labels.push(tickerData.symbol);
+      labels.push(tickerData[0].symbol);
       gainLosses.push(gainLoss);
     }
   }
 
   const ctx = document.getElementById('myChart').getContext('2d');
+  // ctx.canvas.width = 100;
+  // ctx.canvas.height = 200;
 
-  new Chart(ctx, {
+  myChart = new Chart(ctx, {
     type: 'bar', 
     data: {
       labels: labels,
       datasets: [{
         label: 'Gain/Loss in USD',
         data: gainLosses,
-        backgroundColor: 'rgba(75,192,192,0.2)',
+        backgroundColor: 'rgba(180,255,228,1)',
         borderColor:'rgba(75,192,192,1)',
         borderWidth: 1
       }]
     },
     options: {
       responsive: true,
+      // maintainAspectRatio: false,
       scales: {
         y: {
-          beginAtZero: true
+          beginAtZero: true,
         }
       }
-    }
+    },
+    backgroundColor:'black'
   });
 }
 
-
-
 printTile();
-buildChart();
-
-
-
-//local storage can pull what I have saved 
-
-
-// apiInput('AAPL');
-//apiIndex()
