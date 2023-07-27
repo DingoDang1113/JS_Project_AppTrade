@@ -6,17 +6,17 @@ let colorIndex = 0;
 const colors = ['#45ffbc', '#e3ffa8', '#a6a6a6', '#f6cd61','#aec993'];
 
 async function apiFetch(symbol) {
-  const url = `https://financialmodelingprep.com/api/v3/quote/${symbol}?apikey=keys`;
+  const url = `https://financialmodelingprep.com/api/v3/quote/${symbol}?apikey=f43645c7dcc9b1fe95e501b844e1c963`;
 
-  const storedData = localStorage.getItem(`${symbol}`);
-  if (storedData) {
-    return JSON.parse(storedData);
-  }
+  // const storedData = localStorage.getItem(`${symbol}`);
+  // if (storedData) {
+  //   return JSON.parse(storedData);
+  // }
 
   try {
     const response = await fetch(url);
     const result = await response.json();
-    localStorage.setItem(`${symbol}`, JSON.stringify(result));
+    // localStorage.setItem(`${symbol}`, JSON.stringify(result));
     return result;    
   } catch(error) {
     console.error(error);
@@ -29,8 +29,8 @@ async function apiInput(symbol, purchasePrice, quantity) {
   if (data.length > 0) {
     purchasePrices[symbol] = purchasePrice;
     quanties[symbol] = quantity;
-    localStorage.setItem('purchasePrices', JSON.stringify(purchasePrices));
-    localStorage.setItem('quantities', JSON.stringify(quanties))
+    // localStorage.setItem('purchasePrices', JSON.stringify(purchasePrices));
+    // localStorage.setItem('quantities', JSON.stringify(quanties))
 
     return parseFloat(data[0].price);
   } 
@@ -210,8 +210,6 @@ async function onSubmitForm() {
     const gainLoss =  (currentPrice - purchasePrice) * quantity;
     const roi = (currentPrice/purchasePrice -1).toFixed(2)*100;
 
-    
-
     tikerArr.push(ticker)
     await printTile();  // Display the tile
     await updateTotalGainLossAndROI();
@@ -221,15 +219,15 @@ async function onSubmitForm() {
   }  
 }
 
-function printTile () {    // render all tiles
+async function printTile () {    // render all tiles
     document.getElementById('stockTiles').innerHTML = "";
     while (tileDiv.firstChild ) {
       tileDiv.removeChild(tileDiv.firstChild)
     }
-    tikerArr?.forEach ((ticker) => {
-      let tickerData = JSON.parse(localStorage.getItem(ticker));
+    for (const ticker of tikerArr) {
+      let tickerData = await apiFetch(ticker);
       displayData(tickerData);
-    });
+    };
     buildChart();
 }
 
@@ -241,11 +239,11 @@ async function buildChart() {
   let tickers = tikerArr;
   let gainLosses = [];
   let labels = [];
-  const purchasePrices = JSON.parse(localStorage.getItem('purchasePrices'));
-  const quanties = JSON.parse(localStorage.getItem('quantities'));
+  // const purchasePrices = JSON.parse(localStorage.getItem('purchasePrices'));
+  // const quanties = JSON.parse(localStorage.getItem('quantities'));
 
   for (let i = 0; i < tickers.length; i++) {
-    let tickerData = JSON.parse(localStorage.getItem(tickers[i]));
+    let tickerData = await apiFetch(tickers[i]);
     if (tickerData && tickerData.length > 0) {
       let currentPrice = tickerData[0].price;
       let purchasePrice = purchasePrices[tickers[i]];
