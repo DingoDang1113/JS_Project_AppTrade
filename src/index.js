@@ -6,7 +6,7 @@ let colorIndex = 0;
 const colors = ['#45ffbc', '#e3ffa8', '#a6a6a6', '#f6cd61','#aec993'];
 
 async function apiFetch(symbol) {
-  const url = `https://financialmodelingprep.com/api/v3/quote/${symbol}?apikey=`;
+  const url = `https://financialmodelingprep.com/api/v3/quote/${symbol}?apikey=keys`;
 
   const storedData = localStorage.getItem(`${symbol}`);
   if (storedData) {
