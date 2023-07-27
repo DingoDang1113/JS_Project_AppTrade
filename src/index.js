@@ -6,13 +6,12 @@ let colorIndex = 0;
 const colors = ['#45ffbc', '#e3ffa8', '#a6a6a6', '#f6cd61','#aec993'];
 
 async function apiFetch(symbol) {
-  const url = `https://financialmodelingprep.com/api/v3/quote/${symbol}?apikey=9d63fd6e1909cca85846e3cc209`;
+  const url = `https://financialmodelingprep.com/api/v3/quote/${symbol}?apikey=keys`;
 
   const storedData = localStorage.getItem(`${symbol}`);
   if (storedData) {
     return JSON.parse(storedData);
   }
-
 
   try {
     const response = await fetch(url);
@@ -61,8 +60,7 @@ function displayData(data) {
       return `⬇${percent.toFixed(2)}%`
     }
   }
-
-  
+   
   const purchasePrice = purchasePrices[stock['symbol']];
   const quantity = quanties[stock['symbol']];
   const gainLoss =  (stock['price'] - purchasePrice) * quantity;
@@ -77,7 +75,7 @@ function displayData(data) {
   const priceP = document.createElement('p');
   priceP.id = "priceInfo";
   priceP.style.fontStyle = "oblique";
-  priceP.textContent = `$${stock['price'].toFixed(2)}`;
+  priceP.textContent = `$${stock['price'].toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
   
   const percentChgP = document.createElement('p');
   percentChgP.id = "changeInfo";
@@ -91,7 +89,7 @@ function displayData(data) {
   
   const gainLossP = document.createElement('p');
   gainLossP.id = "gainLossInfo";
-  gainLossP.textContent = `$${gainLoss.toFixed(2)}`;
+  gainLossP.textContent = `$${gainLoss.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
   
   const roiP = document.createElement('p');
   roiP.id = "roiInfo";
@@ -133,16 +131,18 @@ function displayData(data) {
 async function updateTotalGainLossAndROI() {
   // Calculate total gain/loss and ROI
   let totalGainLoss = 0;
+  let totalWorth = 0;
   let totalInvestment = 0;
   let totalCurrentValue = 0;
   for (const symbol of Object.keys(purchasePrices)) {
     const data = await apiFetch(symbol);
     if (data && data.length > 0) {
       const currentPrice = data[0].price;
+      totalWorth += currentPrice * quanties[symbol];
       totalGainLoss += (currentPrice - purchasePrices[symbol]) * quanties[symbol];
       totalInvestment += quanties[symbol] * purchasePrices[symbol];
       totalCurrentValue += quanties[symbol] * currentPrice;
-    }
+    } 
   }
   // console.log ('totalGainLoss', totalGainLoss) // gets back value
 
@@ -155,21 +155,41 @@ async function updateTotalGainLossAndROI() {
   summaryTile.innerHTML = "";
   // console.log(summaryTile);
   // summaryTile.textContent = `Total Gain/Loss: $${totalGainLoss.toFixed(2)} Total ROI: ${totalROI.toFixed(2)}%`;
-
-
+ 
+  const summaryTotal = document.createElement('p');
+  summaryTotal.id = "summaryTotal";
+  summaryTotal.style.fontWeight = "800";
+  summaryTotal.style.padding = "1px";
+  summaryTotal.style.fontSize = "20px"
+  summaryTotal.textContent = `$${totalWorth.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  
   const summaryGl = document.createElement('p');
   summaryGl.id = "summaryGL";
-  summaryGl.style.fontWeight = "800";
-  summaryGl.textContent = `Gain/Loss:     $${totalGainLoss.toFixed(2)}`;
-
+  // summaryGl.style.fontWeight = "800";
+  summaryGl.innerHTML = `Gain/Loss<sup>*</sup>:     $${totalGainLoss.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  
   const summaryROI = document.createElement('p');
   summaryROI.id = "summaryROI";
   summaryROI.style.marginTop = '5px';
   summaryROI.textContent = `${totalROI.toFixed(2)}%`;
+  if (totalROI < 0) {
+    summaryGl.style.color = "red";
+    summaryROI.style.color = 'red';
+  } 
 
+  const footer = document.createElement('p');
+  footer.id = 'footer';
+  footer.style.fontSize = '10px';
+  footer.style.fontStyle = 'italic';
+  footer.innerHTML = "<sup>*</sup> not include tax and related fees"
+  
+  
+  
+  
+  summaryTile.appendChild(summaryTotal);
   summaryTile.appendChild(summaryGl);
   summaryTile.appendChild(summaryROI);
-
+  summaryTile.appendChild(footer.cloneNode(true));
 
 }
 
@@ -237,8 +257,7 @@ async function buildChart() {
   }
 
   const ctx = document.getElementById('myChart').getContext('2d');
-  // ctx.canvas.width = 100;
-  // ctx.canvas.height = 200;
+
 
   myChart = new Chart(ctx, {
     type: 'bar', 
@@ -247,22 +266,32 @@ async function buildChart() {
       datasets: [{
         label: 'Gain/Loss in USD',
         data: gainLosses,
+        barPercentage: 2,
+        // barThickness: 6,
+        maxBarThickness:20,
+        minBarThickness:10,
         backgroundColor: 'rgba(180,255,228,1)',
         borderColor:'rgba(75,192,192,1)',
         borderWidth: 1
       }]
     },
     options: {
-      responsive: true,
-      // maintainAspectRatio: false,
+      responsive: false,
+      maintainAspectRatio: false,
       scales: {
         y: {
           beginAtZero: true,
+        },
+        x: {
+          grid: {
+            offset: true
+          }
         }
       }
     },
-    backgroundColor:'black'
+    // backgroundColor:'black'
   });
 }
+
 
 printTile();
