@@ -61,6 +61,7 @@ function displayData(data) {
       return `⬇${percent.toFixed(2)}%`
     }
   }
+  
 
   
   const purchasePrice = purchasePrices[stock['symbol']];
