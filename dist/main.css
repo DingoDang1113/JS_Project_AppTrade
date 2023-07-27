@@ -123,6 +123,8 @@ header {
     border-top: 2px solid transparent;
     transition: 0.3s;
     margin-left: 10px;
+    justify-content: space-evenly;
+    align-items: center;
 }
 
 
@@ -141,19 +143,7 @@ header {
     overflow: auto;
 }
 
-/* #content div {
-    background-color:#45ffbc;
-    width: 155px;
-    border-radius: 8px;
-    margin-left: 8px;
-    justify-content: space-evenly;
 
-} */
-/* .parent {
-    display: flex;
-    justify-content: flex-start;
-    flex-wrap: nowrap;
-} */
 
 #stockTiles div{
     display: inline-flex;
