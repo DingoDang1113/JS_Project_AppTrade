@@ -1,23 +1,22 @@
-let tikerArr = [];
+// import { buildChart, buildPieChart } from "./scripts/charts";
+let tickerArr = [];
 let purchasePrices = {};
-let quanties = {};
+let quantities = {};
+let tickerDataCache = {};
 let myChart;
 let colorIndex = 0;
 const colors = ['#45ffbc', '#e3ffa8', '#a6a6a6', '#f6cd61','#aec993'];
 
 async function apiFetch(symbol) {
-  const url = `https://financialmodelingprep.com/api/v3/quote/${symbol}?apikey=f43645c7dcc9b1fe95e501b844e1c963`;
-
-  const storedData = localStorage.getItem(`${symbol}`);
-  if (storedData) {
-    return JSON.parse(storedData);
+  if (tickerDataCache[symbol]) {
+    return tickerDataCache[symbol];
   }
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(`https://financialmodelingprep.com/api/v3/quote/${symbol}?apikey=f43645c7dcc9b1fe95e501b844e1c963`);
     const result = await response.json();
-    localStorage.setItem(`${symbol}`, JSON.stringify(result));
-    return result;    
+    tickerDataCache[symbol] = result;
+    return result;
   } catch(error) {
     console.error(error);
     return null;
@@ -28,13 +27,12 @@ async function apiInput(symbol, purchasePrice, quantity) {
   const data = await apiFetch(symbol); 
   if (data.length > 0) {
     purchasePrices[symbol] = purchasePrice;
-    quanties[symbol] = quantity;
-    localStorage.setItem('purchasePrices', JSON.stringify(purchasePrices));
-    localStorage.setItem('quantities', JSON.stringify(quanties))
-
+    quantities[symbol] = quantity;
     return parseFloat(data[0].price);
   } 
 }
+
+
 const contentDiv = document.getElementById('content');
 const tileDiv = document.getElementById('stockTiles');
 
@@ -62,7 +60,7 @@ function displayData(data) {
   }
    
   const purchasePrice = purchasePrices[stock['symbol']];
-  const quantity = quanties[stock['symbol']];
+  const quantity = quantities[stock['symbol']];
   const gainLoss =  (stock['price'] - purchasePrice) * quantity;
   const roi = (stock['price']/purchasePrice - 1) * 100;
   
@@ -103,11 +101,11 @@ function displayData(data) {
   const deleteTile = document.createElement('button');
   deleteTile.textContent = '-';
   deleteTile.addEventListener('click', function() {
-  const index = tikerArr.indexOf(stock['symbol']);
+  const index = tickerArr.indexOf(stock['symbol']);
     if (index !== -1) {
-      tikerArr.splice(index, 1);
+      tickerArr.splice(index, 1);
       delete purchasePrices[stock['symbol']];
-      delete quanties[stock['symbol']];
+      delete quantities[stock['symbol']];
     }
     tileDiv.removeChild(tile);
     buildChart();
@@ -138,17 +136,17 @@ async function updateTotalGainLossAndROI() {
     const data = await apiFetch(symbol);
     if (data && data.length > 0) {
       const currentPrice = data[0].price;
-      totalWorth += currentPrice * quanties[symbol];
-      totalGainLoss += (currentPrice - purchasePrices[symbol]) * quanties[symbol];
-      totalInvestment += quanties[symbol] * purchasePrices[symbol];
-      totalCurrentValue += quanties[symbol] * currentPrice;
+      totalWorth += currentPrice * quantities[symbol];
+      totalGainLoss += (currentPrice - purchasePrices[symbol]) * quantities[symbol];
+      totalInvestment += quantities[symbol] * purchasePrices[symbol];
+      totalCurrentValue += quantities[symbol] * currentPrice;
     } 
   }
   // console.log ('totalGainLoss', totalGainLoss) // gets back value
 
   // Calculate ROI
   const totalROI = ((totalCurrentValue / totalInvestment) - 1) * 100;
-  console.log('totalROI',totalROI)
+  // console.log('totalROI',totalROI)
 
   // summary tile
   const summaryTile = document.getElementById('summaryTile');
@@ -195,11 +193,16 @@ async function updateTotalGainLossAndROI() {
 
 
 async function onSubmitForm() {
+
+  const tickerInput = document.getElementById('ticker');
+  const purchasePriceInput = document.getElementById('purchasePrice');
+  const quantityInput = document.getElementById('quantity');
+  
   const ticker = document.getElementById('ticker').value;
   const purchasePrice = parseFloat(document.getElementById('purchasePrice').value);
   const quantity = parseFloat(document.getElementById('quantity').value);
   
-  if (tikerArr.includes(ticker)) {
+  if (tickerArr.includes(ticker)) {
     console.log('This ticker is already added'); 
     return;
   }
@@ -210,9 +213,11 @@ async function onSubmitForm() {
     const gainLoss =  (currentPrice - purchasePrice) * quantity;
     const roi = (currentPrice/purchasePrice -1).toFixed(2)*100;
 
-    
+    tickerInput.value = '';
+    purchasePriceInput.value = '';
+    quantityInput.value = '';
 
-    tikerArr.push(ticker)
+    tickerArr.push(ticker)
     await printTile();  // Display the tile
     await updateTotalGainLossAndROI();
 
@@ -222,34 +227,35 @@ async function onSubmitForm() {
 }
 
 function printTile () {    // render all tiles
-    document.getElementById('stockTiles').innerHTML = "";
-    while (tileDiv.firstChild ) {
-      tileDiv.removeChild(tileDiv.firstChild)
-    }
-    tikerArr?.forEach ((ticker) => {
-      let tickerData = JSON.parse(localStorage.getItem(ticker));
-      displayData(tickerData);
-    });
-    buildChart();
+  document.getElementById('stockTiles').innerHTML = "";
+  while (tileDiv.firstChild ) {
+    tileDiv.removeChild(tileDiv.firstChild)
+  }
+  tickerArr?.forEach ((ticker) => {
+    let tickerData = tickerDataCache[ticker];
+    displayData(tickerData);
+  });
+  buildChart();
 }
+
 
 async function buildChart() {
   if(myChart) {
     myChart.destroy();
   }
 
-  let tickers = tikerArr;
+  let tickers = tickerArr;
   let gainLosses = [];
   let labels = [];
-  const purchasePrices = JSON.parse(localStorage.getItem('purchasePrices'));
-  const quanties = JSON.parse(localStorage.getItem('quantities'));
+  // const purchasePrices = JSON.parse(localStorage.getItem('purchasePrices'));
+  // const quantities = JSON.parse(localStorage.getItem('quantities'));
 
   for (let i = 0; i < tickers.length; i++) {
-    let tickerData = JSON.parse(localStorage.getItem(tickers[i]));
+    let tickerData = tickerDataCache[tickers[i]];
     if (tickerData && tickerData.length > 0) {
       let currentPrice = tickerData[0].price;
       let purchasePrice = purchasePrices[tickers[i]];
-      let quantity = quanties[tickers[i]];
+      let quantity = quantities[tickers[i]];
       let gainLoss = (currentPrice - purchasePrice) * quantity;
       labels.push(tickerData[0].symbol);
       gainLosses.push(gainLoss);
