@@ -1,3 +1,5 @@
+import { stockPrice } from './scripts/fetch.js';
+
 let tikerArr = [];
 let purchasePrices = {};
 let quanties = {};
@@ -5,17 +7,20 @@ let myChart;
 let colorIndex = 0;
 const colors = ['#45ffbc', '#e3ffa8', '#a6a6a6', '#f6cd61','#aec993'];
 
-async function apiFetch(symbol) {
-  const url = `https://financialmodelingprep.com/api/v3/quote/${symbol}?apikey=f43645c7dcc9b1fe95e501b844e1c963`;
+// stockPrice('JPM').then(result => {
+//   console.log("Result:", result);
+// }).catch(error => {
+//   console.error("Error fetching stock price:", error);
+// });
 
-  // const storedData = localStorage.getItem(`${symbol}`);
-  // if (storedData) {
-  //   return JSON.parse(storedData);
-  // }
+
+async function apiFetch(symbol) {
+  // const url = `https://financialmodelingprep.com/api/v3/quote/${symbol}?apikey=f43645c7dcc9b1fe95e501b844e1c963`;
 
   try {
-    const response = await fetch(url);
+    const response = await stockPrice(symbol);
     const result = await response.json();
+    console.log('fetch', result)
     // localStorage.setItem(`${symbol}`, JSON.stringify(result));
     return result;    
   } catch(error) {
@@ -26,9 +31,12 @@ async function apiFetch(symbol) {
 
 async function apiInput(symbol, purchasePrice, quantity) {
   const data = await apiFetch(symbol); 
+  console.log('data', data[0])
   if (data.length > 0) {
     purchasePrices[symbol] = purchasePrice;
     quanties[symbol] = quantity;
+
+    // console.log()
     // localStorage.setItem('purchasePrices', JSON.stringify(purchasePrices));
     // localStorage.setItem('quantities', JSON.stringify(quanties))
 
@@ -39,7 +47,7 @@ const contentDiv = document.getElementById('content');
 const tileDiv = document.getElementById('stockTiles');
 
 function displayData(data) { 
-  // console.log('display is passed with', data);
+  console.log('display is passed with', data);
   const stock = data[0];
   const symbol = document.createElement('span'); 
   const tile = document.createElement('div');
@@ -186,7 +194,7 @@ async function updateTotalGainLossAndROI() {
   
   
   
-  summaryTile.appendChild(summaryTotal);
+  summaryTile.appendChild(summaryTotal); 
   summaryTile.appendChild(summaryGl);
   summaryTile.appendChild(summaryROI);
   summaryTile.appendChild(footer.cloneNode(true));
