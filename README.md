@@ -16,7 +16,7 @@ AppTrade is a comprehensive, real-time stock market analysis tool designed to en
 
 ## Demo
 
-Here is a working live demo: [link](). (Replace [link]() with the actual link after deployment.)
+Here is a working live demo: [link](https://github.com/DingoDang1113/JS_Project_AppTrade/assets/73029929/5b80fc65-0138-4750-b972-b48b5167ddfa).
 
 ![populated](https://github.com/DingoDang1113/JS_Project_AppTrade/assets/73029929/5b80fc65-0138-4750-b972-b48b5167ddfa)
 
